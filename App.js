@@ -1,8 +1,18 @@
-import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableHighlight } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput, TouchableHighlight, Keyboard } from 'react-native';
 import Task from './components/Task'
 
 export default function App() {
+  const [taskTitle, setTaskTitle] = useState('')
+  const [tasks, setTasks] = useState([])
+
+  const onPress = () => {
+    setTasks([...tasks, {title: taskTitle, completed: false}])
+    setTaskTitle('')
+    Keyboard.dismiss()
+    console.log(tasks)
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Tasks Container */}
@@ -10,20 +20,20 @@ export default function App() {
         <Text style={styles.headerText}>Your Tasks</Text>
 
         {/* Container for task items list */}
-        <View style={styles.items}>
-          <Task title="Make a todo app"/>
-          <Task title="Learn React Native" />
-          <Task title="Code" />
-        </View> 
+        <ScrollView style={styles.items}>
+          {tasks.map((task, i) => {
+            return <Task key={i} title={task.title}></Task>
+          })}
+        </ScrollView> 
 
       </View>
 
       {/* Task adding input container */}
       <View style={styles.addTaskContainer}>
-        <TextInput style={styles.taskInput} placeholder="Task to do..."></TextInput>
+        <TextInput style={styles.taskInput} placeholder="Task to do..." value={taskTitle} onChangeText={(text) => setTaskTitle(text)}></TextInput>
 
         {/* Add Task Button */}
-        <TouchableHighlight>
+        <TouchableHighlight onPress={onPress}>
           <View style={styles.addTaskButton}>
             <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 30}}>+</Text>
           </View>
@@ -67,7 +77,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   addTaskButton: {
-    backgroundColor: '#f92ccd',
+    backgroundColor: '#e52750',
     fontWeight: 'bold',
     width: 50,
     height: 50,
@@ -77,3 +87,4 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   }
 });
+ 
