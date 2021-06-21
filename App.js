@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput, TouchableHighlight, Keyboard } from 'react-native';
+import Icon from 'react-native-vector-icons/Foundation'
 import Task from './components/Task'
+import { backgroundColor, primaryColor, secondaryColor } from './consts';
 
 export default function App() {
   const [taskTitle, setTaskTitle] = useState('')
   const [tasks, setTasks] = useState([])
 
   const onPress = () => {
-    setTasks([...tasks, {title: taskTitle, completed: false}])
-    setTaskTitle('')
-    Keyboard.dismiss()
-    console.log(tasks)
+    if (taskTitle) {
+      setTasks([...tasks, {title: taskTitle, completed: false}])
+      setTaskTitle('')
+      Keyboard.dismiss()
+      console.log(tasks)
+    }
   }
 
   return (
@@ -22,7 +26,7 @@ export default function App() {
         {/* Container for task items list */}
         <ScrollView style={styles.items}>
           {tasks.map((task, i) => {
-            return <Task key={i} title={task.title}></Task>
+            return <Task key={i} title={task.title} completed={task.completed}></Task>
           })}
         </ScrollView> 
 
@@ -35,7 +39,7 @@ export default function App() {
         {/* Add Task Button */}
         <TouchableHighlight onPress={onPress}>
           <View style={styles.addTaskButton}>
-            <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 30}}>+</Text>
+            <Icon name='plus' size={25} color={secondaryColor}></Icon>
           </View>
         </TouchableHighlight>
       </View>
@@ -46,7 +50,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e6e6e6',
+    backgroundColor: backgroundColor,
   },
   headerText: {
     fontSize: 22,
@@ -68,7 +72,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around'
   },
   taskInput: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: secondaryColor,
     borderRadius: 10,
     paddingHorizontal: 20,
     width: 300,
@@ -77,7 +81,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   addTaskButton: {
-    backgroundColor: '#e52750',
+    backgroundColor: primaryColor,
     fontWeight: 'bold',
     width: 50,
     height: 50,
