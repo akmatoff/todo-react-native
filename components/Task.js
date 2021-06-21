@@ -1,6 +1,7 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Foundation";
+import FeatherIcon from "react-native-vector-icons/Feather";
 import { secondaryColor, primaryColor } from "../consts";
 
 export default function Task(props) {
@@ -18,7 +19,18 @@ export default function Task(props) {
         <View style={styles.checkbox}></View>
       )}
 
-      <Text>{props.title}</Text>
+      <Text style={styles.taskTitle}>{props.title}</Text>
+
+      {props.selecting ? (
+        <TouchableOpacity>
+          <FeatherIcon
+            name="trash-2"
+            size={20}
+            color={primaryColor}
+            style={{ alignSelf: "flex-end" }}
+          ></FeatherIcon>
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 }
@@ -30,6 +42,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingHorizontal: 17,
     height: 50,
+    flex: 3,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -40,5 +53,8 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     borderColor: primaryColor,
     marginRight: 10,
+  },
+  taskTitle: {
+    width: "85%",
   },
 });

@@ -6,61 +6,99 @@ import {
   ScrollView,
   SafeAreaView,
   TextInput,
-  TouchableHighlight,
+  TouchableOpacity,
   Keyboard,
 } from "react-native";
 import Icon from "react-native-vector-icons/Foundation";
+import FeatherIcon from "react-native-vector-icons/Feather";
 import Task from "./components/Task";
-import { backgroundColor, primaryColor, secondaryColor } from "./consts";
+import {
+  backgroundColor,
+  primaryColor,
+  secondaryColor,
+  textColor,
+} from "./consts";
 
 export default function App() {
   const [taskTitle, setTaskTitle] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [selecting, setSelecting] = useState(false);
+  const [selectedTasks, setSelectedTasks] = useState([]);
 
   const onPress = () => {
     if (taskTitle) {
       setTasks([...tasks, { title: taskTitle, completed: false }]);
       setTaskTitle("");
       Keyboard.dismiss();
-      console.log(tasks);
     }
   };
 
   const taskPress = (i) => {
-    // Update tasks
-    const newTasks = tasks.map((task, index) => {
-      if (i === index) {
-        const taskUpdate = {
-          ...task,
-          completed: !task.completed,
-        };
+    if (!selecting) {
+      // Update tasks
+      const newTasks = tasks.map((task, index) => {
+        if (i === index) {
+          const taskUpdate = {
+            ...task,
+            completed: !task.completed,
+          };
 
-        return taskUpdate;
-      }
+          return taskUpdate;
+        }
 
-      return task;
-    });
+        return task;
+      });
 
-    setTasks(newTasks);
+      setTasks(newTasks);
+    } else {
+      let newSelectedTasks = selectedTasks;
+      tasks.map((task, index) => {
+        if (index === i) {
+          if (!newSelectedTasks.includes(task)) newSelectedTasks.push(task);
+          else newSelectedTasks.splice(index, 1);
+        }
+        return newSelectedTasks;
+      });
+
+      setSelectedTasks(newSelectedTasks);
+      console.log(selectedTasks);
+    }
   };
 
   const taskLongPress = (i) => {
     // Delete a task
-    setTasks(tasks.filter((task, index) => i !== index));
+    // setTasks(tasks.filter((task, index) => i !== index));
+    setSelecting(true);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Tasks Container */}
       <View style={styles.tasksContainer}>
-        <Text style={styles.headerText}>Your Tasks</Text>
+        {/* App header */}
+        <View style={styles.header}>
+          {selecting ? (
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => setSelecting(false)}
+            >
+              <FeatherIcon
+                name="arrow-left"
+                size={27}
+                color={textColor}
+              ></FeatherIcon>
+            </TouchableOpacity>
+          ) : null}
+          <Text style={styles.headerText}>Your Tasks</Text>
+        </View>
 
         {/* Container for task items list */}
         <ScrollView style={styles.items}>
           {tasks.map((task, i) => {
             return (
-              <TouchableHighlight
+              <TouchableOpacity
                 key={i}
+                activeOpacity={0.8}
                 onPress={() => taskPress(i)}
                 onLongPress={() => taskLongPress(i)}
               >
@@ -68,8 +106,9 @@ export default function App() {
                   key={i}
                   title={task.title}
                   completed={task.completed}
+                  selecting={selecting}
                 ></Task>
-              </TouchableHighlight>
+              </TouchableOpacity>
             );
           })}
         </ScrollView>
@@ -85,11 +124,11 @@ export default function App() {
         ></TextInput>
 
         {/* Add Task Button */}
-        <TouchableHighlight onPress={onPress}>
+        <TouchableOpacity onPress={onPress}>
           <View style={styles.addTaskButton}>
             <Icon name="plus" size={25} color={secondaryColor}></Icon>
           </View>
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -100,9 +139,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: backgroundColor,
   },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   headerText: {
     fontSize: 22,
     fontWeight: "bold",
+    marginLeft: 15,
   },
   tasksContainer: {
     paddingTop: 50,
@@ -110,6 +154,7 @@ const styles = StyleSheet.create({
   },
   items: {
     marginTop: 10,
+    maxHeight: "90%",
   },
   addTaskContainer: {
     position: "absolute",
@@ -121,7 +166,7 @@ const styles = StyleSheet.create({
   },
   taskInput: {
     backgroundColor: secondaryColor,
-    borderRadius: 10,
+    borderRadius: 15,
     paddingHorizontal: 20,
     width: 300,
     height: 50,
