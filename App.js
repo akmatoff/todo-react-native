@@ -1,21 +1,48 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput, TouchableHighlight, Keyboard } from 'react-native';
-import Icon from 'react-native-vector-icons/Foundation'
-import Task from './components/Task'
-import { backgroundColor, primaryColor, secondaryColor } from './consts';
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  SafeAreaView,
+  TextInput,
+  TouchableHighlight,
+  Keyboard,
+} from "react-native";
+import Icon from "react-native-vector-icons/Foundation";
+import Task from "./components/Task";
+import { backgroundColor, primaryColor, secondaryColor } from "./consts";
 
 export default function App() {
-  const [taskTitle, setTaskTitle] = useState('')
-  const [tasks, setTasks] = useState([])
+  const [taskTitle, setTaskTitle] = useState("");
+  const [tasks, setTasks] = useState([]);
 
   const onPress = () => {
     if (taskTitle) {
-      setTasks([...tasks, {title: taskTitle, completed: false}])
-      setTaskTitle('')
-      Keyboard.dismiss()
-      console.log(tasks)
+      setTasks([...tasks, { title: taskTitle, completed: false }]);
+      setTaskTitle("");
+      Keyboard.dismiss();
+      console.log(tasks);
     }
-  }
+  };
+
+  const taskPress = (i) => {
+    // Update tasks
+    const newTasks = tasks.map((task, index) => {
+      if (i === index) {
+        const taskUpdate = {
+          ...task,
+          completed: !task.completed,
+        };
+
+        return taskUpdate;
+      }
+
+      return task;
+    });
+
+    setTasks(newTasks);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,20 +53,32 @@ export default function App() {
         {/* Container for task items list */}
         <ScrollView style={styles.items}>
           {tasks.map((task, i) => {
-            return <Task key={i} title={task.title} completed={task.completed}></Task>
+            return (
+              <TouchableHighlight key={i} onPress={() => taskPress(i)}>
+                <Task
+                  key={i}
+                  title={task.title}
+                  completed={task.completed}
+                ></Task>
+              </TouchableHighlight>
+            );
           })}
-        </ScrollView> 
-
+        </ScrollView>
       </View>
 
       {/* Task adding input container */}
       <View style={styles.addTaskContainer}>
-        <TextInput style={styles.taskInput} placeholder="Task to do..." value={taskTitle} onChangeText={(text) => setTaskTitle(text)}></TextInput>
+        <TextInput
+          style={styles.taskInput}
+          placeholder="Task to do..."
+          value={taskTitle}
+          onChangeText={(text) => setTaskTitle(text)}
+        ></TextInput>
 
         {/* Add Task Button */}
         <TouchableHighlight onPress={onPress}>
           <View style={styles.addTaskButton}>
-            <Icon name='plus' size={25} color={secondaryColor}></Icon>
+            <Icon name="plus" size={25} color={secondaryColor}></Icon>
           </View>
         </TouchableHighlight>
       </View>
@@ -54,22 +93,22 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   tasksContainer: {
     paddingTop: 50,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   items: {
-    marginTop: 10
+    marginTop: 10,
   },
   addTaskContainer: {
-    position: 'absolute',
+    position: "absolute",
     paddingHorizontal: 15,
-    width: '100%',
+    width: "100%",
     bottom: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-around'
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   taskInput: {
     backgroundColor: secondaryColor,
@@ -77,18 +116,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     width: 300,
     height: 50,
-    justifyContent: 'center',
-    fontSize: 16
+    justifyContent: "center",
+    fontSize: 16,
   },
   addTaskButton: {
     backgroundColor: primaryColor,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     width: 50,
     height: 50,
     paddingBottom: 2,
     borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
- 
