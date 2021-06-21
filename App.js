@@ -44,6 +44,11 @@ export default function App() {
     setTasks(newTasks);
   };
 
+  const taskLongPress = (i) => {
+    // Delete a task
+    setTasks(tasks.filter((task, index) => i !== index));
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Tasks Container */}
@@ -54,7 +59,11 @@ export default function App() {
         <ScrollView style={styles.items}>
           {tasks.map((task, i) => {
             return (
-              <TouchableHighlight key={i} onPress={() => taskPress(i)}>
+              <TouchableHighlight
+                key={i}
+                onPress={() => taskPress(i)}
+                onLongPress={() => taskLongPress(i)}
+              >
                 <Task
                   key={i}
                   title={task.title}
@@ -118,6 +127,9 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     fontSize: 16,
+    shadowColor: "#222",
+    shadowOpacity: 0.3,
+    shadowRadius: 30,
   },
   addTaskButton: {
     backgroundColor: primaryColor,
@@ -126,6 +138,9 @@ const styles = StyleSheet.create({
     height: 50,
     paddingBottom: 2,
     borderRadius: 60,
+    shadowColor: "#222",
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
     justifyContent: "center",
     alignItems: "center",
   },
