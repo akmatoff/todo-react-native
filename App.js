@@ -24,20 +24,22 @@ export default function App() {
   const [tasks, setTasks] = useState([]);
   const [selecting, setSelecting] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState([]);
+  const [taskID, setTaskID] = useState(0);
 
-  const onPress = () => {
+  const addTaskPress = () => {
     if (taskTitle) {
-      setTasks([...tasks, { title: taskTitle, completed: false }]);
+      setTasks([...tasks, { id: taskID, title: taskTitle, completed: false }]);
       setTaskTitle("");
       Keyboard.dismiss();
+      setTaskID(taskID + 1);
     }
   };
 
-  const taskPress = (i) => {
+  const taskPress = (id) => {
     if (!selecting) {
       // Update tasks
-      const newTasks = tasks.map((task, index) => {
-        if (i === index) {
+      const newTasks = tasks.map((task) => {
+        if (task.id === id) {
           const taskUpdate = {
             ...task,
             completed: !task.completed,
@@ -53,19 +55,21 @@ export default function App() {
     } else {
       let newSelectedTasks = selectedTasks;
       tasks.map((task, index) => {
-        if (index === i) {
+        if (task.id === id) {
           if (!newSelectedTasks.includes(task)) newSelectedTasks.push(task);
-          else newSelectedTasks.splice(index, 1);
+          else newSelectedTasks.splice(newSelectedTasks.indexOf(task), 1);
         }
         return newSelectedTasks;
       });
 
       setSelectedTasks(newSelectedTasks);
-      console.log(selectedTasks);
+      console.log("Selected tasks:", selectedTasks);
     }
+
+    console.log(id);
   };
 
-  const taskLongPress = (i) => {
+  const taskLongPress = (id) => {
     // Delete a task
     // setTasks(tasks.filter((task, index) => i !== index));
     setSelecting(true);
@@ -80,7 +84,10 @@ export default function App() {
           {selecting ? (
             <TouchableOpacity
               activeOpacity={0.5}
-              onPress={() => setSelecting(false)}
+              onPress={() => {
+                setSelecting(false);
+                setSelectedTasks([]);
+              }}
             >
               <FeatherIcon
                 name="arrow-left"
@@ -94,16 +101,16 @@ export default function App() {
 
         {/* Container for task items list */}
         <ScrollView style={styles.items}>
-          {tasks.map((task, i) => {
+          {tasks.map((task) => {
             return (
               <TouchableOpacity
-                key={i}
+                key={task.id}
                 activeOpacity={0.8}
-                onPress={() => taskPress(i)}
-                onLongPress={() => taskLongPress(i)}
+                onPress={() => taskPress(task.id)}
+                onLongPress={() => taskLongPress(task.id)}
               >
                 <Task
-                  key={i}
+                  key={task.id}
                   title={task.title}
                   completed={task.completed}
                   selecting={selecting}
@@ -124,7 +131,7 @@ export default function App() {
         ></TextInput>
 
         {/* Add Task Button */}
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={addTaskPress}>
           <View style={styles.addTaskButton}>
             <Icon name="plus" size={25} color={secondaryColor}></Icon>
           </View>
