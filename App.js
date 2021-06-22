@@ -24,6 +24,7 @@ export default function App() {
   const [tasks, setTasks] = useState([]);
   const [selecting, setSelecting] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState([]);
+  const [select, setSelect] = useState(false); // Need it to update state on selection. Don't know why it didn't work with it
   const [taskID, setTaskID] = useState(0);
 
   const addTaskPress = () => {
@@ -53,8 +54,9 @@ export default function App() {
 
       setTasks(newTasks);
     } else {
+      // Save selected tasks to an array
       let newSelectedTasks = selectedTasks;
-      tasks.map((task, index) => {
+      tasks.map((task) => {
         if (task.id === id) {
           if (!newSelectedTasks.includes(task)) newSelectedTasks.push(task);
           else newSelectedTasks.splice(newSelectedTasks.indexOf(task), 1);
@@ -63,16 +65,17 @@ export default function App() {
       });
 
       setSelectedTasks(newSelectedTasks);
+      setSelect(!select);
       console.log("Selected tasks:", selectedTasks);
     }
-
-    console.log(id);
   };
 
   const taskLongPress = (id) => {
-    // Delete a task
-    // setTasks(tasks.filter((task, index) => i !== index));
     setSelecting(true);
+  };
+
+  const taskDelete = () => {
+    setTasks(tasks.filter((task) => !selectedTasks.includes(task)));
   };
 
   return (
@@ -81,6 +84,7 @@ export default function App() {
       <View style={styles.tasksContainer}>
         {/* App header */}
         <View style={styles.header}>
+          {/* Arrow left - button to deselect */}
           {selecting ? (
             <TouchableOpacity
               activeOpacity={0.5}
@@ -111,9 +115,10 @@ export default function App() {
               >
                 <Task
                   key={task.id}
-                  title={task.title}
-                  completed={task.completed}
+                  task={task}
                   selecting={selecting}
+                  selectedTasks={selectedTasks}
+                  select={select}
                 ></Task>
               </TouchableOpacity>
             );
@@ -122,21 +127,33 @@ export default function App() {
       </View>
 
       {/* Task adding input container */}
-      <View style={styles.addTaskContainer}>
-        <TextInput
-          style={styles.taskInput}
-          placeholder="Task to do..."
-          value={taskTitle}
-          onChangeText={(text) => setTaskTitle(text)}
-        ></TextInput>
+      {!selecting ? (
+        <View style={styles.bottomContainer}>
+          <TextInput
+            style={styles.taskInput}
+            placeholder="Task to do..."
+            value={taskTitle}
+            onChangeText={(text) => setTaskTitle(text)}
+          ></TextInput>
 
-        {/* Add Task Button */}
-        <TouchableOpacity onPress={addTaskPress}>
-          <View style={styles.addTaskButton}>
-            <Icon name="plus" size={25} color={secondaryColor}></Icon>
-          </View>
-        </TouchableOpacity>
-      </View>
+          {/* Add Task Button */}
+          <TouchableOpacity onPress={addTaskPress}>
+            <View style={styles.addTaskButton}>
+              <Icon name="plus" size={22} color={secondaryColor}></Icon>
+            </View>
+          </TouchableOpacity>
+        </View>
+      ) : selectedTasks.length > 0 ? (
+        <View style={styles.bottomContainer}>
+          <TouchableOpacity onPress={taskDelete}>
+            <FeatherIcon
+              name="trash-2"
+              size={27}
+              color={primaryColor}
+            ></FeatherIcon>
+          </TouchableOpacity>
+        </View>
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -163,7 +180,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     maxHeight: "90%",
   },
-  addTaskContainer: {
+  bottomContainer: {
     position: "absolute",
     paddingHorizontal: 15,
     width: "100%",

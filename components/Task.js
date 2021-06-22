@@ -6,9 +6,22 @@ import { secondaryColor, primaryColor } from "../consts";
 
 export default function Task(props) {
   return (
-    <View style={styles.singleTask}>
+    <View
+      style={{
+        backgroundColor: secondaryColor,
+        borderColor: primaryColor,
+        borderWidth: props.selectedTasks.includes(props.task) ? 2 : 0,
+        borderRadius: 10,
+        marginTop: 10,
+        paddingHorizontal: 17,
+        height: 50,
+        flex: 3,
+        flexDirection: "row",
+        alignItems: "center",
+      }}
+    >
       {/* Checkbox. Return elements depending on whether the task is completed or not. */}
-      {props.completed ? (
+      {props.task.completed ? (
         <Icon
           name="checkbox"
           size={22}
@@ -19,33 +32,12 @@ export default function Task(props) {
         <View style={styles.checkbox}></View>
       )}
 
-      <Text style={styles.taskTitle}>{props.title}</Text>
-
-      {props.selecting ? (
-        <TouchableOpacity>
-          <FeatherIcon
-            name="trash-2"
-            size={20}
-            color={primaryColor}
-            style={{ alignSelf: "flex-end" }}
-          ></FeatherIcon>
-        </TouchableOpacity>
-      ) : null}
+      <Text style={styles.taskTitle}>{props.task.title}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  singleTask: {
-    backgroundColor: secondaryColor,
-    borderRadius: 10,
-    marginTop: 10,
-    paddingHorizontal: 17,
-    height: 50,
-    flex: 3,
-    flexDirection: "row",
-    alignItems: "center",
-  },
   checkbox: {
     height: 15,
     width: 15,
