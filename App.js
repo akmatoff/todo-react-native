@@ -18,13 +18,7 @@ import {
   secondaryColor,
   textColor,
 } from "./tools/consts";
-import {
-  saveTasks,
-  getTasks,
-  setTaskID,
-  getTaskID,
-  saveTaskID,
-} from "./tools/store";
+import { getTasks, saveTasks, getTaskID, saveTaskID } from "./tools/store";
 
 export default function App() {
   const [taskTitle, setTaskTitle] = useState("");
@@ -33,17 +27,21 @@ export default function App() {
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [select, setSelect] = useState(false); // Need it to update state on selection. Don't know why it didn't work with it
   const [taskID, setTaskID] = useState(0);
+  const [save, setSave] = useState(false);
 
   useEffect(() => {
-    getTasks().then((items) => {
-      if (items) setTasks(items);
-      console.log("Get tasks:", tasks);
-    });
+    getTasks().then((data) => setTasks(data));
+    getTaskID().then((data) => setTaskID(data));
+  }, []);
 
-    getTaskID().then((id) => {
-      if (id) setTaskID(Number(id));
-    });
+  useEffect(() => {
+    if (save) saveData();
   });
+
+  const saveData = () => {
+    saveTasks(tasks);
+    saveTaskID(taskID);
+  };
 
   const addTaskPress = () => {
     if (taskTitle) {
@@ -51,8 +49,7 @@ export default function App() {
       setTaskTitle("");
       Keyboard.dismiss();
       setTaskID(taskID + 1);
-      saveTasks(tasks);
-      saveTaskID(taskID);
+      setSave(true);
     }
   };
 
@@ -96,6 +93,7 @@ export default function App() {
 
   const taskDelete = () => {
     setTasks(tasks.filter((task) => !selectedTasks.includes(task)));
+    setSave(true);
   };
 
   return (
@@ -157,7 +155,7 @@ export default function App() {
           ></TextInput>
 
           {/* Add Task Button */}
-          <TouchableOpacity onPress={addTaskPress}>
+          <TouchableOpacity onPress={() => addTaskPress()}>
             <View style={styles.addTaskButton}>
               <Icon name="plus" size={22} color={secondaryColor}></Icon>
             </View>
@@ -165,7 +163,7 @@ export default function App() {
         </View>
       ) : selectedTasks.length > 0 ? (
         <View style={styles.bottomContainer}>
-          <TouchableOpacity onPress={taskDelete}>
+          <TouchableOpacity onPress={() => taskDelete()}>
             <FeatherIcon
               name="trash-2"
               size={27}

@@ -1,21 +1,38 @@
-import MMKVStorage from "react-native-mmkv-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const MMKV = new MMKVStorage.Loader().initialize();
-
-const saveTasks = async (tasks) => {
-  await MMKV.setArrayAsync("tasks", tasks);
+export const getTasks = async () => {
+  try {
+    const result = await AsyncStorage.getItem("tasks");
+    if (result) return JSON.parse(result);
+    else return [];
+  } catch (e) {
+    console.error(e);
+  }
 };
 
-const getTasks = async () => {
-  return await MMKV.getArrayAsync("tasks");
+export const saveTasks = async (tasks) => {
+  try {
+    let jsonTasks = JSON.stringify(tasks);
+    await AsyncStorage.setItem("tasks", jsonTasks);
+  } catch (e) {
+    console.error(e);
+  }
 };
 
-const saveTaskID = async (taskID) => {
-  await MMKV.setStringAsync("taskID", taskID);
+export const getTaskID = async () => {
+  try {
+    const result = await AsyncStorage.getItem("taskID");
+    if (result) return Number(result);
+    else return 0;
+  } catch (e) {
+    console.error(e);
+  }
 };
 
-const getTaskID = async () => {
-  return await MMKV.getStringAsync("taskID");
+export const saveTaskID = async (taskID) => {
+  try {
+    await AsyncStorage.setItem("taskID", String(taskID));
+  } catch (e) {
+    console.error(e);
+  }
 };
-
-export { saveTasks, getTasks, saveTaskID, getTaskID };

@@ -7,18 +7,10 @@ import { secondaryColor, primaryColor } from "../tools/consts";
 export default function Task(props) {
   return (
     <View
-      style={{
-        backgroundColor: secondaryColor,
-        borderColor: primaryColor,
-        borderWidth: props.selectedTasks.includes(props.task) ? 2 : 0,
-        borderRadius: 10,
-        marginTop: 10,
-        paddingHorizontal: 17,
-        height: 50,
-        flex: 3,
-        flexDirection: "row",
-        alignItems: "center",
-      }}
+      style={[
+        styles.taskContainer,
+        { borderWidth: props.selectedTasks.includes(props.task) ? 2 : 0 },
+      ]}
     >
       {/* Checkbox. Return elements depending on whether the task is completed or not. */}
       {props.task.completed ? (
@@ -38,6 +30,17 @@ export default function Task(props) {
 }
 
 const styles = StyleSheet.create({
+  taskContainer: {
+    backgroundColor: secondaryColor,
+    borderColor: primaryColor,
+    borderRadius: 10,
+    marginTop: 10,
+    paddingHorizontal: 17,
+    height: 50,
+    flex: 3,
+    flexDirection: "row",
+    alignItems: "center",
+  },
   checkbox: {
     height: 15,
     width: 15,
