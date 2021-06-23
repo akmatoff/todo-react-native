@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Foundation";
 import FeatherIcon from "react-native-vector-icons/Feather";
-import { secondaryColor, primaryColor } from "../consts";
+import { secondaryColor, primaryColor } from "../tools/consts";
 
 export default function Task(props) {
   return (

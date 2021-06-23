@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -17,7 +17,14 @@ import {
   primaryColor,
   secondaryColor,
   textColor,
-} from "./consts";
+} from "./tools/consts";
+import {
+  saveTasks,
+  getTasks,
+  setTaskID,
+  getTaskID,
+  saveTaskID,
+} from "./tools/store";
 
 export default function App() {
   const [taskTitle, setTaskTitle] = useState("");
@@ -27,12 +34,25 @@ export default function App() {
   const [select, setSelect] = useState(false); // Need it to update state on selection. Don't know why it didn't work with it
   const [taskID, setTaskID] = useState(0);
 
+  useEffect(() => {
+    getTasks().then((items) => {
+      if (items) setTasks(items);
+      console.log("Get tasks:", tasks);
+    });
+
+    getTaskID().then((id) => {
+      if (id) setTaskID(Number(id));
+    });
+  });
+
   const addTaskPress = () => {
     if (taskTitle) {
       setTasks([...tasks, { id: taskID, title: taskTitle, completed: false }]);
       setTaskTitle("");
       Keyboard.dismiss();
       setTaskID(taskID + 1);
+      saveTasks(tasks);
+      saveTaskID(taskID);
     }
   };
 
